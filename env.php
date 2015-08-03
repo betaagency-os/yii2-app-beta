@@ -3,22 +3,24 @@
 
 require(__DIR__ . '/vendor/autoload.php');
 
-Dotenv::makeMutable();
-
 if(file_exists(__DIR__.'/.env')){
-  Dotenv::load(__DIR__.'/', '.env');
+  $de = new Dotenv\Dotenv(__DIR__);
+  $de->overload();
 }
 if(file_exists(__DIR__.'/../.env')){
-  Dotenv::load(__DIR__.'/../', '.env');
+  $de = new Dotenv\Dotenv(__DIR__.'/../');
+  $de->overload();
 }
+$de->required([
+  'YII_ENV',
+  'MYSQL_HOST', 'MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_DATABASE',
+  'COOKIE_KEY'
+]);
 
-if(!defined('YII_ENV')){
-  echo "Переменная YII_ENV не установлена";
-  exit(1);
-}
-
-if(YII_ENV == 'dev'){
+if($_SERVER['YII_ENV'] == 'dev'){
+  define('YII_ENV', 'dev');
   define('YII_DEBUG', true);
 }else{
+  define('YII_ENV', 'prod');
   define('YII_DEBUG', false);
 }
